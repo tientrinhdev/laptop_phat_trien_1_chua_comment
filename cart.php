@@ -1,0 +1,141 @@
+<?
+require "inc/init.php";
+require "library.php";
+$conn = include("inc/db.php");
+
+if (isset($_SESSION['logged_in'])) {
+    if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
+    if (isset($_GET['delcart']) && ($_GET['delcart'] == 1)) array_splice($_SESSION['cart'], 0);
+    if (isset($_GET['delid']) && ($_GET['delid'] >= 0)) {
+        array_splice($_SESSION['cart'], $_GET['delid'], 1);
+    }
+    if (isset($_POST['addcart']) && ($_POST['addcart'])) {
+        $idproduct = $_POST['idproduct'];
+        $productname = $_POST['productname'];
+        $imagefile = $_POST['imagefile'];
+        $price = $_POST['price'];
+        $number = $_POST['quantity'];
+        $total;
+
+        $fl = 0;
+        for ($i = 0; $i < sizeof($_SESSION['cart']); $i++) {
+            if ($_SESSION['cart'][$i][1] == $productname) {
+                $fl = 1;
+                $numbernew = $number + $_SESSION['cart'][$i][4];
+                $_SESSION['cart'][$i][4] = $numbernew;
+                break;
+            }
+        }
+
+        if ($fl == 0) {
+            $sp = array($idproduct, $productname, $imagefile, $price, $number);
+            $_SESSION['cart'][] = $sp;
+        }
+    }
+} else {
+    Dialog::showAndRedirect("Vui lòng đăng nhập.", 'login.php');
+}
+
+require "inc/header.php";
+?>
+<!-- Table  -->
+<div class="content">
+    <fieldset>
+        <legend>
+            <h2>Giỏ hàng</h2>
+        </legend>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>TT</th>
+                        <th>Tên Sản Phẩm</th>
+                        <th>Ảnh</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th>Xóa</th>
+                    </tr>
+                </thead>
+                <!-- các dòng dữ liệu ở đây -->
+                <tr>
+                    <?
+                    showCart();
+                    ?>
+                </tr>
+            </table>
+        </div>
+        <div class="row">
+            <form style="all: unset" action="addorder.php" method="post">
+                <div class="row">
+                    <input type="submit" class="btn" value="Đặt hàng" name="dongydathang">
+                </div>
+                <a class="btn" href="cart.php?delcart=1">Xóa giỏ hàng</a>
+                <a class="btn" href="index.php">Tiếp tục mua hàng</a>
+        </div>
+        <fieldset>
+            <legend>
+                <h2>Thông tin nhận hàng</h2>
+            </legend>
+            <div class="row">
+                <label for="name">Họ tên</label>
+                <input name="name" id="name" type="text" placeholder="Họ tên" required>
+            </div>
+            <div class="row">
+                <label for="phone">Điện thoại</label>
+                <input name="phone" id="phone" type="text" placeholder="Điện thoại" required>
+            </div>
+            <div class="row">
+                <label for="address">Địa chỉ</label>
+                <input name="address" id="address" type="text" placeholder="Địa chỉ" required>
+            </div>
+            <div class="row">
+                <label for="email">Email</label>
+                <input name="email" id="email" type="email" placeholder="Email" required>
+            </div>
+            <div class="row">
+                <label for="note">Ghi chú</label>
+                <textarea name="note" id="note" type="text" placeholder="Ghi chú" cols="30" rows="10" required></textarea>
+            </div>
+            <div class="row">
+                <legend>
+                    <h5>Phương thức thanh toán</h5>
+                </legend>
+                <input type="radio" name="pttt" value="1">Thanh toán khi nhận hàng<br>
+                <input type="radio" name="pttt" value="2">Thanh toán chuyển khoản<br>
+                <input type="radio" name="pttt" value="3">Thanh toán ví MoMo<br>
+            </div>
+            <div class="row">
+                <input type="submit" class="btn" value="Đặt hàng" name="dongydathang">
+            </div>
+</div>
+</fieldset>
+</form>
+</fieldset>
+<? require "inc/footer.php" ?>
+
+<script>
+$(document).ready(function() {
+    $('.update-btn').click(function() {
+        var index = $(this).attr('data-index');
+        var newQuantity = $('input[name="quantity[]"][data-index="' + index + '"]').val();
+        
+        $.ajax({
+            url: 'updatecart.php',
+            type: 'POST',
+            data: { index: index, quantity: newQuantity },
+            success: function(response) {
+                if (response === "success") {
+                    alert("Số lượng đã được cập nhật.");
+                    location.reload();
+                } else {
+                    alert("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+                }
+            },
+            error: function() {
+                alert("Đã xảy ra lỗi kết nối.");
+            }
+        });
+    });
+});
+</script>
