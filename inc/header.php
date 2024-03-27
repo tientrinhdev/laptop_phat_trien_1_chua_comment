@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="css/style.css?v=<?echo time();?>" />
     <link rel="stylesheet" href="css/style_form.css?v=<?echo time();?>" />
+    <link rel="stylesheet" href="css/style_detail.css?v=<?echo time();?>" />
     <link rel="stylesheet" href="css/style_card.css?v=<?echo time();?>" />
     <script src="https://cdn.jsdelivr.net/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -19,18 +20,18 @@
                 <div class="left col-2">
                     <div class="brand">
                         <i class="icon"></i>
-                        <h1 class="name">LAPTOP</h1>
+                        <h1 class="name"><a style="color:black" href="home.php">LAPTOP</a></h1>
                     </div>
                 </div>
                 <div class="right col-6">
                     <ul class="main-nav">
                     <? if(!Auth::isLoggedIn()): ?>
-                        <li class="item"><a href="index.php" class="text">Trang chủ</a></li>
+                        <li class="item"><a href="home.php" class="text">Trang chủ</a></li>
                         <li class="item"><a href="addcontact.php" class="text">Liên hệ</a></li>
                         <li class="item"><a href="adduser.php" class="text">Đăng kí</a></li>
                         <li class="item"><a href="login.php" class="text">Đăng nhập</a></li>
                         <?elseif(Auth::isLoggedIn()): ?>
-                            <li class="item"><a href="index.php" class="text">Trang chủ</a></li>
+                            <li class="item"><a href="home.php" class="text">Trang chủ</a></li>
                             <li class="item"><a href="addcontact.php" class="text">Liên hệ</a></li>
                             <li class="item"><a href="showorder.php" class="text">Đơn hàng</a></li>
                             <li class="item"><a href="cart.php" class="text">Giỏ hàng</a></li>

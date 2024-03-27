@@ -30,7 +30,8 @@ function SendMail($email,$username, $verify_token){
     }
  }
 
-$usernameError = "";
+if(Auth::isLoggedIn()){
+    $usernameError = "";
 $passwordError = "";
 $emailError = "";
 $role = 1;
@@ -62,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
             if ($user->addUser($conn)) {
                 SendMail($email,$username, $verify_token);
-                Dialog::show("Thêm người dùng thành công.  Vui lòng kiểm tra email để xác thực tài khoản.");
+                Dialog::show("Vui lòng kiểm tra email để xác thực tài khoản.");
             } else {
                 Dialog::show("Không thể thêm người dùng.");
             }
@@ -73,8 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Dialog::show("Email đã được đăng kí");
         }
     } else {
-        Dialog::show('Error !!!');
+        Dialog::show('Vui lòng nhập đủ thông tin.');
     }
+}
+}else{
+    header("Location:../index.php");
 }
 
 require "inc/header.php";

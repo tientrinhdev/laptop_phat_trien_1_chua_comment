@@ -1,36 +1,37 @@
 <?
 include("inc/init.php");
 if (Auth::isLoggedIn() == false) {
-    header("location:login.php");
-    exit();
-}
-$username = $_SESSION['logged_in'];
-$password_cu_Error = "";
-$password_moi_Error = "";
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $password_cu = $_POST['password_cu'];
-    $password_moi = $_POST['password_moi'];
-    $rpassword_moi = $_POST['rpassword_moi'];
+    Dialog::showAndRedirect("Vui lòng đăng nhập.", "login.php");
+} else {
+    $username = $_SESSION['logged_in'];
+    $password_cu_Error = "";
+    $password_moi_Error = "";
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $password_cu = $_POST['password_cu'];
+        $password_moi = $_POST['password_moi'];
+        $rpassword_moi = $_POST['rpassword_moi'];
 
-    $conn = require("inc/db.php");
-    $user = User::getByUsernamePass($conn, $username, $password_cu);
-    if (!empty($user)) {
-        $pass_pattern = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{5,}$/";
-        if (!preg_match($pass_pattern, $password_moi)) {
-            $password_moi_Error = "Có ít nhất 8 ký tự, ít nhất 1 kí tự hoa, ít nhất 1 kí tự thường, ít nhất 1 chữ số, ít nhất 1 kí tự đặc biệt.";
-        }
-        if ($password_moi != $rpassword_moi) {
-            $password_moi_Error = "Thông tin mật khẩu nhập lại không đúng.";
-        }
-        if ($password_cu_Error == "" && $password_moi_Error == "") {
-            if ($user->updatePassWord($conn, $username, $password_moi)) {
-                Dialog::show("Đổi mật khẩu thành công.");
+        $conn = require("inc/db.php");
+        $user = User::getByUsernamePass($conn, $username, $password_cu);
+        if (!empty($user)) {
+            $pass_pattern = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{5,}$/";
+            if (!preg_match($pass_pattern, $password_moi)) {
+                $password_moi_Error = "Có ít nhất 8 ký tự, ít nhất 1 kí tự hoa, ít nhất 1 kí tự thường, ít nhất 1 chữ số, ít nhất 1 kí tự đặc biệt.";
             }
+            if ($password_moi != $rpassword_moi) {
+                $password_moi_Error = "Thông tin mật khẩu nhập lại không đúng.";
+            }
+            if ($password_cu_Error == "" && $password_moi_Error == "") {
+                if ($user->updatePassWord($conn, $username, $password_moi)) {
+                    Dialog::show("Đổi mật khẩu thành công.");
+                }
+            }
+        } else {
+            $password_cu_Error = "Mật khẩu cũ không đúng.";
         }
-    } else {
-        $password_cu_Error = "Mật khẩu cũ không đúng.";
     }
 }
+
 
 
 include("inc/header.php");
@@ -40,7 +41,9 @@ include("inc/header.php");
 <div class="content">
     <form style="all: unset" action="" method="post" id="frmEDITPASSWORD">
         <fieldset>
-            <legend><h2>Đổi mật khẩu</h2></legend>
+            <legend>
+                <h2>Đổi mật khẩu</h2>
+            </legend>
             <div class="row">
                 <!-- Nhập lại mật khẩu cũ -->
                 <label for="password_cu">Mật khẩu cũ</label>

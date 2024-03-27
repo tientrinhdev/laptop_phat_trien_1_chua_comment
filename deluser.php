@@ -1,27 +1,27 @@
 <?
-    include("inc/init.php");
-    if (Auth::isLoggedIn() == false) {
-        header("location:login.php");
-        exit();
-    }
+include("inc/init.php");
+if (Auth::isLoggedIn() == false) {
+    Dialog::showAndRedirect("Vui lòng đăng nhập", "login.php");
+} else {
     $username = $_SESSION['logged_in'];
     $passwordError = "";
-    if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $password = $_POST['password'];
 
         $conn = require("inc/db.php");
-        $user = User::getByUsername($conn, $username, $password);
-        if(!empty($user)){
-            if($user->deleteUser($conn, $username)){
+        if (User::authenticate($conn, $username, $password)) {
+            if (User::deleteUser($conn, $username, $password)) {
                 Auth::logout();
-                header("Location: index.php");
+                Dialog::showAndRedirect("Xóa tài khoản thành công.", "index.php");
+            } else {
+                Dialog::show("Xóa tài khoản không thành công.");
             }
-
-        }else{
+        } else {
             Dialog::show("Mật khẩu không đúng.");
         }
     }
-    include("inc/header.php");
+}
+include("inc/header.php");
 ?>
 
 
@@ -29,7 +29,9 @@
 <div class="content">
     <form style="all: unset" action="" method="post" id="frmDELUSER">
         <fieldset>
-            <legend><h2>Xóa tài khoản</h2></legend>
+            <legend>
+                <h2>Xóa tài khoản</h2>
+            </legend>
             <div class="row">
                 <!-- Nhập lại mật khẩu -->
                 <label for="password">Nhập lại mật khẩu</label>

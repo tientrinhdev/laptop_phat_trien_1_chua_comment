@@ -1,5 +1,5 @@
 <?
- require "inc/init.php";
+require "inc/init.php";
 
 require "inc/header.php";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -8,15 +8,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
     $users = User::getByUsername($conn, $username, $password);
     if (User::authenticate($conn, $username, $password)) {
-        if ($users->role == 1) {
-            Auth::login($username);
+        if ($users->role == 1 && $users->verify_status == 1) {
+            Auth::login($username, $password);
             header("Location:admin/admin.php");
-        }else{
-            Auth::login($username);
-            header("Location:index.php");
+        } else if ($users->role == 0 && $users->verify_status == 1) {
+            Auth::login($username, $password);
+            header("Location:home.php");
+        } else {
+            header("Location:verifyreset.php?email=$users->email&username=$users->username&verify_token=$users->verify_token");
         }
     } else {
-        Dialog::show("Sai tên người dùng hoặc mật khẩu hoặc tài khoản chưa được xác thực email");
+        Dialog::show("Sai tên người dùng hoặc mật khẩu.");
     }
 }
 
@@ -26,7 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="content">
     <form style="all: unset" action="" method="post" id="frmLOGIN">
         <fieldset>
-            <legend><h2>Đăng nhập</h2></legend>
+            <legend>
+                <h2>Đăng nhập</h2>
+            </legend>
             <div class="row">
                 <!-- nhập tên người dùng -->
                 <label for="username">Tên tài khoản</label>
@@ -44,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="submit" class="btn" value="Đăng nhập">
                 <input type="reset" class="btn" value="Thoát">
                 <br><br>
-                <a href="forgetpassword.php">Quên mật khẩu</a>
+                <a style="color: green; padding-left:20px" href="forgetpassword.php">Quên mật khẩu</a>
             </div>
         </fieldset>
     </form>

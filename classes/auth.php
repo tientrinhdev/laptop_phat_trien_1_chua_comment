@@ -7,19 +7,12 @@ class Auth
         return isset($_SESSION['logged_in']) && $_SESSION['logged_in'];
     }
 
-    //Bắt buộc đăng nhập
-    public static function requireLogin()
-    {
-        if (!static::isLoggedIn()) {
-            die('Please login to continue!');
-        }
-    }
-
     //Tạo session sau khi đăng nhập
-    public static function login($username)
+    public static function login($username, $password)
     {
         session_regenerate_id(true);
         $_SESSION['logged_in'] = $username;
+        $_SESSION['pass'] = $password;
     }
 
     //Xóa session, cookie sau khi đăng xuất

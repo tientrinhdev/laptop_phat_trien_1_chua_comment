@@ -1,28 +1,32 @@
 <?
 require "../inc/init.php";
 
-if (isset($_GET['id'])) {
-    $conn = require("../inc/db.php");
-    $product = Product::getById($conn, $_GET['id']);
-    if (!$product) {
-        Dialog::show('Không tìm thấy sản phẩm');
-        return;
-    }
-} else {
-    Dialog::show('Vui lòng nhập ID');
-    return;
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $product->id = $_GET['id'];
-    $oldimage = $product->imagefile;
-    if ($product->deleteById($conn, $_GET['id'])) {
-        if ($oldimage) {
-            unlink("../uploads/$oldimage");
+if(Auth::isLoggedIn()){
+    if (isset($_GET['id'])) {
+        $conn = require("../inc/db.php");
+        $product = Product::getById($conn, $_GET['id']);
+        if (!$product) {
+            Dialog::show('Không tìm thấy sản phẩm');
+            return;
         }
-        header("Location:admin.php");
-        return;
+    } else {
+       header("Location:admin.php");
+       exit();
     }
+    
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $product->id = $_GET['id'];
+        $oldimage = $product->imagefile;
+        if ($product->deleteById($conn, $_GET['id'])) {
+            if ($oldimage) {
+                unlink("../uploads/$oldimage");
+            }
+            header("Location:admin.php");
+            return;
+        }
+    }
+}else{
+    header("Location:../index.php");
 }
 
 require "inc/header.php";
@@ -63,14 +67,14 @@ require "inc/header.php";
                     <label for="author">Hình ảnh:</label>
                 </div>
                 <div class="row">
-                    <img src="../uploads/<? echo $product->imagefile ?>" width="100">
+                    <img src="../uploads/<? echo $product->imagefile ?>" width="500px">
                 </div>
             <? else : ?>
                 <div class="row">
                     <label for="author">Hình ảnh:</label>
                 </div>
                 <div class="row">
-                    <img src="../images/noimage.jpg" width="100">
+                    <img src="../images/noimage.jpg" width="500px">
                 </div>
             <? endif; ?>
 

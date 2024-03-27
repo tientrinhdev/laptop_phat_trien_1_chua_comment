@@ -1,4 +1,5 @@
 <?
+date_default_timezone_set("Asia/Bangkok");
 class Product
 {
     public $id;
@@ -8,8 +9,9 @@ class Product
     public $price;
     public $imagefile;
     public $id_user;
+    public $created_day;
 
-    public function __construct($productname = null, $branch = null, $description = null, $price = null, $imagefile = null, $id_user = null)
+    public function __construct($productname = null, $branch = null, $description = null, $price = null, $imagefile = null, $id_user = null, $created_day = null)
     {
         $this->productname = $productname;
         $this->branch = $branch;
@@ -17,6 +19,7 @@ class Product
         $this->price = $price;
         $this->imagefile = $imagefile;
         $this->id_user = $id_user;
+        $this->created_day = date('Y-m-d  h:i:s');
     }
 
     private function validate(){
@@ -38,7 +41,7 @@ class Product
     {
         if ($this->validate()) {
             try {
-                $sql = "insert into products (productname, branch, description, price, imagefile, id_user) values (:productname, :branch, :description, :price, :imagefile, :id_user)";
+                $sql = "insert into products (productname, branch, description, price, imagefile, id_user, created_day) values (:productname, :branch, :description, :price, :imagefile, :id_user, :created_day)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bindValue(':productname', $this->productname, PDO::PARAM_STR);
                 $stmt->bindValue(':branch', $this->branch, PDO::PARAM_STR);
@@ -46,6 +49,7 @@ class Product
                 $stmt->bindValue(':price', $this->price, PDO::PARAM_INT);
                 $stmt->bindValue(':imagefile', $this->imagefile, PDO::PARAM_STR);
                 $stmt->bindValue(':id_user', $this->id_user, PDO::PARAM_INT);
+                $stmt->bindValue(':created_day', $this->created_day, PDO::PARAM_STR);
                 return $stmt->execute();
             } catch (Exception $e) {
                 echo $e->getMessage();
@@ -108,22 +112,38 @@ public static function getById($conn, $id)
         }
     }
 //Hàm sửa thông tin sản phẩm trừ ảnh
-    public function update($conn)
-    {
-        try {
-            $sql = "update products set productname =:productname, branch =:branch, description=:description, price=:price where id=:id";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':productname', $this->productname, PDO::PARAM_STR);
-            $stmt->bindValue(':branch', $this->branch, PDO::PARAM_STR);
-            $stmt->bindValue(':description', $this->description, PDO::PARAM_STR);
-            $stmt->bindValue(':price', $this->price, PDO::PARAM_INT);
-            $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return false;
-        }
+public function update($conn)
+{
+    try {
+        $sql = "update products set productname =:productname, branch =:branch, description=:description, price=:price where id=:id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':productname', $this->productname, PDO::PARAM_STR);
+        $stmt->bindValue(':branch', $this->branch, PDO::PARAM_STR);
+        $stmt->bindValue(':description', $this->description, PDO::PARAM_STR);
+        $stmt->bindValue(':price', $this->price, PDO::PARAM_STR);
+        $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
+        return $stmt->execute();
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+        return false;
     }
+}
+
+//Hàm sửa ảnh của sản phẩm
+public function updateImage($conn, $id, $imagefile)
+{
+    try {
+        $sql = "update products
+        set imagefile =:imagefile where id =:id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->bindValue(':imagefile', $this->imagefile, $this->imagefile == null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        return $stmt->execute();
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+        return false;
+    }
+}
 //Hàm xóa sản phẩm bằng id
     public function deleteById($conn, $id)
     {
@@ -137,21 +157,7 @@ public static function getById($conn, $id)
             return false;
         }
     }
-//Hàm sửa ảnh của sản phẩm
-    public function updateImage($conn, $id, $imagefile)
-    {
-        try {
-            $sql = "update products
-            set imagefile =:imagefile where id =:id";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-            $stmt->bindValue(':imagefile', $this->imagefile, $this->imagefile == null ? PDO::PARAM_NULL : PDO::PARAM_STR);
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            echo $e->getMessage();
-            return false;
-        }
-    }
+
 }
 
 ?>

@@ -1,36 +1,41 @@
 <?
     require "../inc/init.php";
-    if(isset($_GET['id'])){
-        $conn = require ("../inc/db.php");
-        $product = Product::getById($conn, $_GET['id']);
-        if(!$product){
-            Dialog::show('Không tìm thấy sản phẩm');
-            return;
-        }
-    }else{
-        Dialog::show('Vui lòng nhập ID');
-        return;
-    }
-
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $product->id = $_GET['id'];
-        $product->productname = $_POST['productname'];
-        $product->branch = $_POST['branch'];
-        $product->description = $_POST['description'];
-        $product->price = $_POST['price'];
-        if($product->update($conn)){
+    if(Auth::isLoggedIn()){
+        if(isset($_GET['id'])){
+            $conn = require ("../inc/db.php");
+            $product = Product::getById($conn, $_GET['id']);
+            if(!$product){
+                Dialog::show('Không tìm thấy sản phẩm');
+                return;
+            }
+        }else {
             header("Location:admin.php");
             exit();
-        }
-        }
+         }
+         
     
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $product->id = $_GET['id'];
+            $product->productname = $_POST['productname'];
+            $product->branch = $_POST['branch'];
+            $product->description = $_POST['description'];
+            $product->price = $_POST['price'];
+            if($product->update($conn)){
+                header("Location:admin.php");
+                exit();
+            }
+            }
+        
+    }else{
+        header("Location:../index.php");
+    }
     require "inc/header.php";
 ?>
 
 
 
 <div class="content">
-    <form style="all: unset" method="post" id="frmEDITPRODUCT">
+    <form style="all:unset" method="post" id="frmEDITPRODUCT">
         <fieldset>
         <legend><h2>Sửa thông tin sản phẩm</h2></legend>
             <div class="row">

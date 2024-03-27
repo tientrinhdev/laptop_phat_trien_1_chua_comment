@@ -1,28 +1,32 @@
 <? require "../inc/init.php";
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        $conn = require("../inc/db.php");
-        try {
-            $user = User::getByUsername($conn, $_SESSION['logged_in']);
-           
-            $fullname = Uploadfile::process();
-            if(!empty($fullname)){
-                $productname = $_POST['productname'];
-                $branch = $_POST['branch'];
-                $description = $_POST['description'];
-                $price = $_POST['price'];
-                $id_user = $user->id;
-            
-                $product = new Product($productname, $branch, $description, $price, $fullname, $id_user);
+    if(Auth::isLoggedIn()){
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $conn = require("../inc/db.php");
+            try {
+                $user = User::getByUsername($conn, $_SESSION['logged_in']);
+               
+                $fullname = Uploadfile::process();
+                if(!empty($fullname)){
+                    $productname = $_POST['productname'];
+                    $branch = $_POST['branch'];
+                    $description = $_POST['description'];
+                    $price = $_POST['price'];
+                    $id_user = $user->id;
                 
-                if($product->add($conn)){
-                    header("location:admin.php");
-                }else{
-                    unlink("../uploads/$fullname");
+                    $product = new Product($productname, $branch, $description, $price, $fullname, $id_user);
+                    
+                    if($product->add($conn)){
+                        header("location:admin.php");
+                    }else{
+                        unlink("../uploads/$fullname");
+                    }
                 }
+            } catch (Exception $e) {
+                Dialog::show($e->getMessage());
             }
-        } catch (Exception $e) {
-            Dialog::show($e->getMessage());
         }
+    }else{
+        header("Location:../index.php");
     }
 ?>
 <? require "inc/header.php" ?>

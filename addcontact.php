@@ -1,15 +1,16 @@
 <?
     include("inc/init.php");
     if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+        $id_code = "FEEDBACK".rand(0,9999999);
        $name = $_POST['name'];
        $phone = $_POST['phone'];
        $email = $_POST['email'];
        $feedback = $_POST['feedback'];
        $conn = include("inc/db.php");
-       $contact = new Contact($name, $phone, $email, $feedback);
+       $contact = new Contact($id_code,$name, $phone, $email, $feedback);
        try {
         if ($contact->add($conn)) {
-            Dialog::show("Gửi thành công.");
+            Dialog::showAndRedirect("Gửi thành công.", "addcontact.php");
         } else {
             Dialog::show("Gửi thất bại.");
         }
@@ -26,7 +27,7 @@
 <div class="content">
 <form style="all: unset" action="" method="post" id="frmCONTACT">
         <fieldset>
-            <legend><h2>Liên hệ</h2></legend>
+            <legend><h2>Liên hệ với chúng tôi</h2></legend>
             <div class="row">
                 <label for="name">Họ và tên</label>
                 <input name="name" id="name" type="text" placeholder="Họ và tên">

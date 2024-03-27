@@ -7,7 +7,7 @@
         $user = User::getByUsername($conn, $username);
         //Thông tin 
         $id_user = $user->id;
-        $id_order = "BAHOZONE".rand(0,9999999);
+        $id_code = "BAHOZONE".rand(0,9999999);
         $name = $_POST['name'];
         $phone = $_POST['phone'];
         $address = $_POST['address'];
@@ -15,7 +15,7 @@
         $note = $_POST['note'];
         $total =  totalOrder();
         $pttt = $_POST['pttt'];
-        $order = new Order($id_order, $id_user, $name,$email, $phone, $address, $note, $total, $pttt);
+        $order = new Order($id_code, $id_user, $name,$email, $phone, $address, $note, $total, $pttt);
         $iddh = $order->add($conn);
         if(!empty($iddh)){
             if(isset($_SESSION['cart']) && (count($_SESSION['cart']) > 0)){
@@ -27,9 +27,9 @@
                 Dialog::showAndRedirect("Đặt hàng thành công", "showorder.php");
             }
          }
-        //else{
-        //     Dialog::showAndRedirect("Thêm đơn hàng thất bại!", "cart.php");
-        // }
+        else{
+            Dialog::showAndRedirect("Thêm đơn hàng thất bại!", "cart.php");
+        }
     }
 ?>
 

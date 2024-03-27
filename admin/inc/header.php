@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../css/style.css?v=<?echo time();?>" />
     <link rel="stylesheet" href="../css/style_form.css?v=<?echo time();?>" />
-    <link rel="stylesheet" href="../css/style_card.css?v=<?echo time();?>" />
+    <link rel="stylesheet" href="../css/style_detail.css?v=<?echo time();?>" />
     <script src="https://cdn.jsdelivr.net/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
     <script src="js/script.js"></script>
@@ -18,13 +18,14 @@
                 <div class="left col-2">
                     <div class="brand">
                         <i class="icon"></i>
-                        <h1 class="name">LAPTOP</h1>
+                        <h1 class="name"><a style="color:black" href="admin.php">LAPTOP</a></h1>
                     </div>
                 </div>
                 <div class="right col-6">
                     <ul class="main-nav">
                         <?if(Auth::isLoggedIn()): ?>
                             <li class="item"><a href="admin.php" class="text">Trang chủ</a></li>
+                            <li class="item"><a href="order.php" class="text">Đơn hàng</a></li>
                             <li class="item"><a href="contact.php" class="text">Danh sách liên hệ</a></li>
                             <li class="item"><a href="addproduct.php" class="text">Thêm sản phẩm</a></li>
                             <li class="item"><a href="addadmin.php" class="text">Thêm quản lý</a></li>

@@ -10,12 +10,12 @@
                 <td align="center">' . ($i + 1) . '</td>
                 <td align="center">' . $_SESSION['cart'][$i][1] . '</td>
                 <td align="center"><img width="100px" src="uploads/' . $_SESSION['cart'][$i][2] . '"></td>
-                <td align="center">' . $_SESSION['cart'][$i][3] . '</td>
+                <td align="center">'. number_format($_SESSION['cart'][$i][3], 0, '.', '.') .' VND</td>
                 <td align="center">
                 <input min="1"  max="10" style="width: 40px;" type="number" name="quantity[]" value="'.$_SESSION['cart'][$i][4].'" data-index="'.($i).'">
                 <button class="update-btn" data-index="'.($i).'">Cập nhật</button>
                 </td>
-                <td align="center">' . $total . '</td>
+                <td align="center">' .number_format($total, 0, '.', '.') . ' VND</td>
                 <td align="center">
                 <a href="cart.php?delid=' . $i . '">Xóa</a> 
                 </td>
@@ -24,7 +24,7 @@
             }
             echo '<tfoot>
         <th colspan="4">Tổng:</th>
-        <th colspan="3">' . $tong . '</th>
+        <th colspan="3">' . number_format($tong, 0, '.', '.') . ' VND</th>
     </tfoot>';
         } else {
             echo "<h2>Giỏ hàng rỗng</h2>";

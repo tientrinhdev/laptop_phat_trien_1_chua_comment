@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
             if ($user->addUser($conn)) {
                 SendMail($email,$username, $verify_token);
-                Dialog::showAndRedirect("Thêm người dùng thành công. Vui lòng kiểm tra email để xác thực tài khoản.", "login.php");
+                Dialog::showAndRedirect("Vui lòng kiểm tra email để xác thực tài khoản.", "login.php");
             } else {
                 Dialog::show("Không thể thêm người dùng.");
             }

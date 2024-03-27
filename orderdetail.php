@@ -37,15 +37,15 @@ include("inc/header.php");
                             <td align="center"><?= $i++ ?></td>
                             <td align="center"><?= $cart['productname'] ?></td>
                             <td align="center"><img src="uploads/<?=$cart['imagefile'] ?>" width="100px"></td>
-                            <td align="center"><?= $cart['price'] ?></td>
+                            <td align="center"><?= number_format($cart['price'], 0, '.', '.') ?> VND</td>
                             <td align="center"><?= $cart['quantity'] ?></td>
-                            <td align="center"><?= $total ?></td>
+                            <td align="center"><?= number_format($total, 0, '.', '.') ?> VND</td>
                             <? $tong+=$total ?>
                         </tr>
                     <?php endforeach; ?>
                     <tfoot>
                         <th colspan="5">Tổng tiền:</th>
-                        <th><?= $tong ?></th>
+                        <th><?= number_format($tong, 0, '.', '.') ?> VND</th>
                     </tfoot>
                 <? else : ?>
                     <h2>Không có đơn hàng nào!!!</h2>

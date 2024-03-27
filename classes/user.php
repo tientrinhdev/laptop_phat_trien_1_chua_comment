@@ -21,10 +21,9 @@ class User
     // Xác thực người dùng
     public static function authenticate($conn, $username, $password)
     {
-        $sql = "select * from users where username=:username and verify_status=:verify_status";
+        $sql = "select * from users where username=:username";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':username', $username, PDO::PARAM_STR);
-        $stmt->bindValue(':verify_status', 1, PDO::PARAM_INT);
         $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'User');
         $stmt->execute();
         $user = $stmt->fetch();
@@ -118,13 +117,18 @@ class User
 
     //Xóa user
 
-    public function deleteUser($conn, $username)
+    public static function deleteUser($conn, $username)
     {
         try {
             $sql = "delete from users where username=:username";
             $stmt = $conn->prepare($sql);
             $stmt->bindValue(':username', $username, PDO::PARAM_STR);
-            return $stmt->execute();
+            $stmt->execute();
+            if ($stmt->rowCount() > 0) {
+                return true;
+            } else {
+                return false;
+            }
         } catch (PDOException $e) {
             echo $e->getMessage();
             return false;
@@ -147,7 +151,7 @@ class User
             return null;
         }
     }
-    
+
     //Lấy ra thông tin của 1 user bằng email và verify_token
     public static function getAllByEmailAndToken($conn, $email, $verify_token)
     {
@@ -166,7 +170,7 @@ class User
             return null;
         }
     }
-//thay đổi trạng thái xác thực email
+    //thay đổi trạng thái xác thực email
     public function updateVerify_status($conn, $email, $verify_token)
     {
         try {
@@ -199,4 +203,3 @@ class User
         }
     }
 }
-
