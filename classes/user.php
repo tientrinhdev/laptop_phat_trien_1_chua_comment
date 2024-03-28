@@ -56,6 +56,23 @@ class User
         } else
             return false;
     }
+
+        //Hàm lấy ra thông tin
+public static function getAll($conn)
+{
+    try {
+        $sql = "select * from users where role = 0 order by id asc";
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Product');
+        if ($stmt->execute()) {
+            $user = $stmt->fetchAll();
+            return $user;
+        }
+    } catch (PDOException $e) {
+        echo $e->getMessage();
+        return null;
+    }
+}
     //lấy ra thông tin 1 người theo username và password
     public static function getByUsernamePass($conn, $username, $password)
     {
@@ -134,6 +151,24 @@ class User
             return false;
         }
     }
+
+    public static function deleteUserById($conn, $id)
+    {
+        try {
+            $sql = "delete from users where id=:id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            if($stmt->execute()){
+                return true;
+            }else{
+                return false;
+            }
+            
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return false;
+        }
+    }
     //Kiểm tra email
     public static function getByEmail($conn, $email)
     {
@@ -202,4 +237,7 @@ class User
             return false;
         }
     }
+
+
+    
 }

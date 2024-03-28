@@ -10,7 +10,7 @@ if (Auth::isLoggedIn()) {
 if (isset($_GET['delete']) && isset($_GET['id'])) {
     $orders = Order::getAllById($conn, $_GET['id']);
     $id = $_GET['id'];
-    if ($orders['status'] == 'Người bán đang chuẩn bị hàng') {
+    if ($orders['status'] == 'Chờ người bán xác nhận đơn hàng') {
         if (Order::deleteById($conn, $id)) {
             Dialog::showAndRedirect("Hủy đơn hàng thành công.", "showorder.php");
         } else {
@@ -20,6 +20,9 @@ if (isset($_GET['delete']) && isset($_GET['id'])) {
         Dialog::showAndRedirect("Đơn hàng đã bị hủy", "showorder.php");
     } else if ($orders['status'] == 'Đang giao hàng') {
         Dialog::showAndRedirect("Đơn hàng đang trên đường đến, không thể hủy.", "showorder.php");
+    }else if($orders['status'] == 'Người bán đang chuẩn bị hàng' || $orders['status'] == "Đơn hàng đã giao đến bạn"){
+        header("Location:showorder.php");
+        exit();
     } else {
         Dialog::showAndRedirect("Đã nhận thành công đơn hàng", "showorder.php");
     }
@@ -30,19 +33,16 @@ if (isset($_GET['delete']) && isset($_GET['id'])) {
     if (isset($_GET['update']) && isset($_GET['id'])) {
         $orders = Order::getAllById($conn, $_GET['id']);
         $id = $_GET['id'];
-        $status = 'Giao hàng thành công';
-        if ($orders['status'] == 'Đang giao hàng') {
+        $status = 'Đã giao';
+        if ($orders['status'] == 'Đơn hàng đã giao đến bạn') {
             if (Order::updateStatus($conn, $id, $status)) {
                 Dialog::showAndRedirect("Xác nhận đơn hàng thành công", "showorder.php");
             } else {
                 Dialog::showAndRedirect("Xác nhận đơn hàng thất bại", "showorder.php");
             }
-        } else if ($orders['status'] == 'Đơn đã bị hủy') {
-            Dialog::showAndRedirect("Xác nhận đơn hàng thất bại", "showorder.php");
-        } else if ($orders['status'] == 'Người bán đang chuẩn bị hàng') {
-            Dialog::showAndRedirect("Xác nhận đơn hàng thất bại", "showorder.php");
-        } else {
-            Dialog::showAndRedirect("Đơn hàng đã xác nhận.", "showorder.php");
+        } else{
+            header("Location:showorder.php");
+            exit();
         }
     }
 } else {

@@ -26,7 +26,8 @@
                         <?if(Auth::isLoggedIn()): ?>
                             <li class="item"><a href="admin.php" class="text">Trang chủ</a></li>
                             <li class="item"><a href="order.php" class="text">Đơn hàng</a></li>
-                            <li class="item"><a href="contact.php" class="text">Danh sách liên hệ</a></li>
+                            <li class="item"><a href="contact.php" class="text">Liên hệ</a></li>
+                            <li class="item"><a href="user.php" class="text">Người dùng</a></li>
                             <li class="item"><a href="addproduct.php" class="text">Thêm sản phẩm</a></li>
                             <li class="item"><a href="addadmin.php" class="text">Thêm quản lý</a></li>
                             <li class="item"><a href="deladmin.php" class="text">Xóa tài khoản</a></li>

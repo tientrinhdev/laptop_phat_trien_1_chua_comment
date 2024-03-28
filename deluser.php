@@ -10,7 +10,7 @@ if (Auth::isLoggedIn() == false) {
 
         $conn = require("inc/db.php");
         if (User::authenticate($conn, $username, $password)) {
-            if (User::deleteUser($conn, $username, $password)) {
+            if (User::deleteUser($conn, $username)) {
                 Auth::logout();
                 Dialog::showAndRedirect("Xóa tài khoản thành công.", "index.php");
             } else {
